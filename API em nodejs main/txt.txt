@@ -1,0 +1,12 @@
+	/*
+	
+	
+	tsc -init 
+arquivo de configuração ts
+
+shitf b arquivo , tsc build 
+
+
+--------
+npm i jsonwebtoken -- instalação do token
+	*/
