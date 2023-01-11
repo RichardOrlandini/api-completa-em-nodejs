@@ -28,12 +28,13 @@ class UserControllers {
     async update(request, response) {
         const {name, email, password, old_password } = request.body;
         const { user_id } = request.user.id; 
+        
         console.log(user_id)
 
         const user = await knex("users").where("id", "=", user_id);
 
         if (!user) {
-            throw new AppError("Usúario não existe")    
+            throw new AppError("Usuário não existe")    
         }
 
         const userWithUpdateEmail = await knex("users").where({email }).first();  
@@ -71,5 +72,24 @@ class UserControllers {
 
         
     }
+
+    async delete(request, response){
+        const {user_id} = request.body;
+
+        await knex("users").where("id", "=", user_id).delete();
+
+        return response.json();
+    }
+
+    /**
+     * 
+     * 1 - pegar o id 
+     * 2- deleter ele no banco de dados
+     * 3- dar o respose.kjson
+     * 4- colocar ele na rota
+     * 5- testar
+     * 
+     * 
+     */
 }
 module.exports = UserControllers

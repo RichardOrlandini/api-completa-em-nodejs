@@ -7,12 +7,13 @@ const { sign } = require("jsonwebtoken");
 
 class SessionsController { 
     async create(request, response){
-        const { email, password} = request.query;
+        const { email, password} = request.body;
+        console.log(email,password);
 
         const user = await knex("users").where({email}).first();
 
         if (!user){
-            throw new AppError("usúario não cadastrado", 401);
+            throw new AppError("usuário não cadastrado", 401);
         }
 
         const passwordMatched = await compare(password, user.password)
@@ -23,7 +24,7 @@ class SessionsController {
 
         const { secret, expiresIn } = authConfig.jwt;
         const token = sign({}, secret, {
-            subject: String(user.id), //Convertendo para texto o id do usúario.
+            subject: String(user.id), //Convertendo para texto o id do usuário.
             expiresIn
         })
 
