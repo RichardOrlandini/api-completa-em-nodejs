@@ -1,10 +1,17 @@
 require("express-async-errors"); //import de erros asincronos
 const AppError = require("./utils/AppError");
 
+
+
 const Express = require('express');
 const app = Express();
-
 app.use(Express.json())
+
+const cors = require("cors");
+app.use(cors()); // abilitar a função de receber as requisições do fron end
+
+const uploadConfig = require("./configs/upload")
+app.use("/files", Express.static(uploadConfig.UPLOADS_FOLDER));
 
 const routes = require('./routes');
 app.use(routes);
