@@ -3,7 +3,7 @@ const knex = require("../database/knex")
 class NotesControllers {
     async create(requeste, response){
         const {title, description, tags, links} = requeste.body;
-        const {user_id} = requeste.params;
+        const user_id = requeste.user.id;
 
         const note_id = await knex("notes").where({user_id}).insert({
             title,
@@ -35,11 +35,13 @@ class NotesControllers {
     }
     
     async show(request, response){
-        const {id} = request.params;
+        const user_id = request.user.id;
+        console.log(request)
+        console.log("os")
 
-        const note = await knex("notes").where({id}).first();
-        const tags = await knex("tags").where({note_id: id}).orderBy("name");
-        const links = await knex("links").where({note_id: id}).orderBy("created_at")
+        const note = await knex("notes").where({id: user_id}).first();
+        const tags = await knex("tags").where({note_id: user_id}).orderBy("name");
+        const links = await knex("links").where({note_id: user_id}).orderBy("created_at")
 
         return response.json({
             ...note,
@@ -59,7 +61,8 @@ class NotesControllers {
     }
 
     async  index(request, response){
-        const {user_id, title, tags} = request.query;
+        const { title, tags} = request.query;
+        const user_id = request.user.id;
 
         let notes;
         

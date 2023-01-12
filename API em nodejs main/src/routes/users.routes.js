@@ -8,6 +8,6 @@ const userControllers = new UserControllers();
 
 
 usersRoutes.post('/', userControllers.create)
-usersRoutes.put('/', ensureAuthenticated, userControllers.update)
+usersRoutes.put('/', ensureAuthenticated, userControllers.update);
 
 module.exports = usersRoutes;
