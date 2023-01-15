@@ -6,7 +6,19 @@ arquivo de configuração ts
 
 shitf b arquivo , tsc build 
 
+npm i jsonwebtoken -- instalação do token
 
 --------
-npm i jsonwebtoken -- instalação do token
 	*/
+
+
+pastas:
+
+Configs --
+tmp --
+middleware --
+providers --
+
+
+------------------------
+configs: auth.js 
