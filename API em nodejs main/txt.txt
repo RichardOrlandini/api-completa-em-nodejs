@@ -1,6 +1,4 @@
 	/*
-	
-	
 	tsc -init 
 arquivo de configuração ts
 
@@ -21,4 +19,16 @@ providers --
 
 
 ------------------------
-configs: auth.js 
+configs: auth.js ]
+
+exemplo de como executar um teste
+
+-------------
+testes:
+
+instalação do jest:
+npm i --save-dev jest
+- npx jest --init
+
+Rodar os testes: 
+npm test
