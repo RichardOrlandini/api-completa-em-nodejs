@@ -36,11 +36,15 @@ describe("UserCreateService", () => {
         const user2 = {
             name: "User Test 2",
             email: "user@test.com",
-            password: "123"
+            password: "456"
         };
 
+        //criar usuario:
         await userCreateService.execute(user1);
-        await expect(userCreateService.execute(user2)).rejects.toEqual(new AppError("Este email já  está em uso!"))
+        // criar usuario com email ja cadastrado:
+        expect(async () => {
+            await userCreateService.execute(user2)
+        }).rejects.toEqual(new AppError("Este email já  está em uso!"));
         
     });
 });
