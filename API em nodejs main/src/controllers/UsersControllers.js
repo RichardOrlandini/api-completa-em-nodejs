@@ -15,7 +15,7 @@ class UserControllers {
 
          await userCreateService.execute({name, email, password});
 
-        return {id: userId};
+        return response.status(201).json();
     }
 
     
