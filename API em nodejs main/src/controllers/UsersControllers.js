@@ -2,7 +2,7 @@ const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 const { hash, compare } = require("bcryptjs");
 
-const UserRepository = require("../repositories/UserRepository");
+const UserRepository = require("../repositories/UserRepositories/UserRepository");
 const UserCreateService = require("../services/UserCreateService");
 
 class UserControllers {
@@ -20,63 +20,30 @@ class UserControllers {
 
     
     async update(request, response) {
-        
-        const user_id = request.user.id
-        const { name, email, password, new_password } = request.body
-    
-        const userExists = await knex('users').where({ email })
 
-        if (userExists.length === 1 && userExists[0].id !== user_id) {
-          throw new AppError('Email já cadastrado')
-        }
-    
-        if (password && new_password) {
-          const validUserPassword = await knex
-            .select('password')
-            .from('users')
-            .where('id', user_id)
-    
-          const checkOldPassword = await compare(
-            password,
-            validUserPassword[0].password
-          )
-          const att_password = await hash(new_password, 8)
-          if (!checkOldPassword) {
-            throw new AppError('A senha antiga nao confere')
-          }
-    
-          const user_update = await knex('users').where('id', user_id).update({
-            password: att_password
-          })
-        }
-    
-        const user_update = await knex('users').where('id', user_id).update({
-          name,
-          email
-        })
-    
-        return response.json()
-      }
+        const user_id = request.user.id;
+        const { name, email, password, new_password } = request.body;
 
-    
-      async delete(request, response) {
-        const { user_id } = request.params
-    
-        const user_delete = await knex('users').where('id', user_id).delete()
-    
+        const userRepository = new UserRepository();
+        const userCreateService = new UserCreateService(userRepository);
+
+        userCreateService.executeUpdate({name, email, password, new_password});
+
         return response.json()
-      }
     }
 
-  
-    /**
-     * 
-     * 1 - pegar o id 
-     * 2- deleter ele no banco de dados
-     * 3- dar o respose.kjson
-     * 4- colocar ele na rota
-     * 5- testar
-      
-     */
+    
+    async delete(request, response) {
+        const user_id = request.user.id;
+
+        const userRepository = new UserRepository();
+        const userCreateService = new UserCreateService(userRepository);
+        
+        await userCreateService.deleteUser({user_id})
+    
+        return response.status(200).json();
+    }
+
+}
 
 module.exports = UserControllers
