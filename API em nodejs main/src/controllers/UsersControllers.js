@@ -1,7 +1,3 @@
-const knex = require("../database/knex");
-const AppError = require("../utils/AppError");
-const { hash, compare } = require("bcryptjs");
-
 const UserRepository = require("../repositories/UserRepositories/UserRepository");
 const UserCreateService = require("../services/UserCreateService");
 
@@ -18,20 +14,19 @@ class UserControllers {
         return response.status(201).json();
     }
 
-    
     async update(request, response) {
-
-        const user_id = request.user.id;
         const { name, email, password, new_password } = request.body;
+        const user_id = request.user.id;
 
         const userRepository = new UserRepository();
-        const userCreateService = new UserCreateService(userRepository);
 
-        userCreateService.executeUpdate({name, email, password, new_password});
 
-        return response.json()
+        const userCreateService =  new UserCreateService(userRepository);
+
+        await userCreateService.executeUpdate({name, email, password, new_password,  user_id});
+
+        return response.json();
     }
-
     
     async delete(request, response) {
         const user_id = request.user.id;
@@ -43,7 +38,6 @@ class UserControllers {
     
         return response.status(200).json();
     }
-
 }
 
 module.exports = UserControllers

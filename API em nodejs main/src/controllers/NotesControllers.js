@@ -16,13 +16,13 @@ class NotesControllers {
     }
     
     async show(request, response){
+        const {id} = request.params;
 
-        const user_id = request.user.id;
+        const noteRepository = new NoteRepository();
 
-        title, tags, user_id
-        const notes = await noteRepository.show({user_id});
+        const notes = await noteRepository.show(id);
 
-        return response.json(notes);
+        return response.json({notes});
 
     }
 
@@ -40,10 +40,10 @@ class NotesControllers {
         const user_id = request.user.id;
         
         const noteRepository = new NoteRepository();
-        const notesWithTags = await noteRepository.index({title, tags, user_id});
+        const notes = await noteRepository.index({title, tags, user_id});
         
 
-        return response.json(notesWithTags)
+        return response.json(notes)
     }
 }
 module.exports = NotesControllers;   

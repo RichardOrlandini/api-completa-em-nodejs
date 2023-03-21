@@ -1,4 +1,4 @@
-
+const knex = require("../../database/knex");
 
 class NoteRepository {
 
@@ -31,16 +31,13 @@ class NoteRepository {
         await knex("links").insert(linksInsert);
     }
 
-    async show({user_id}){
+    async show(id){
+        const note = await knex("notes").where({id});
+        const tags = await knex("tags").where({note_id: id}).orderBy("name");
+        const links = await knex("links").where({note_id: id}).orderBy("created_at")
 
-        const note = await knex("notes").where({id: user_id}).first();
-        const tags = await knex("tags").where({note_id: user_id}).orderBy("name");
-        const links = await knex("links").where({note_id: user_id}).orderBy("created_at")
-
-        const notes = {...note,tags,links};
-
-
-        return notes;
+        return {...note, tags, links};
+        
     }
 
     async index({title, tags, user_id}){
@@ -64,7 +61,6 @@ class NoteRepository {
             .orderBy("notes.title")
 
         }else{
-
             notes =  await knex("notes")
             .where({user_id})
             .whereLike("title",`%${title}%`)
@@ -74,17 +70,9 @@ class NoteRepository {
 
         const userTags = await knex("tags").where({user_id});
 
-        const notesWithTags =  notes.map(note => {
-            
-        const noteTags = userTags.filter(tag => tag.note_id === note.id);
-            
-            return {
-                ...note,
-                tags: noteTags
-            }
-        });
-
-        return notesWithTags;
+        return notes.map(note => {
+                    const noteTags = userTags.filter(tag => tag.note_id === note.id);
+                        return {...note, tags: noteTags}});
     }
 }
 

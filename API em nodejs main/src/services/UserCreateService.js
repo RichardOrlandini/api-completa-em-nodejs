@@ -1,5 +1,5 @@
 const AppError = require("../utils/AppError");
-const { hash } = require("bcryptjs");
+const { hash, compare } = require("bcryptjs");
 
 
 class UserCreateService {
@@ -23,29 +23,37 @@ class UserCreateService {
     }
 
     async executeUpdate({name, email, password, new_password, user_id}){
+      
+      const user = await this.userRepository.findById(user_id);
+      if (!user) { 
+          throw new AppError("usuario não encontrado!")
+      }
 
-        const checkUserExists = await this.userRepository.findByEmail(email);
+      if (email){
+        const userWithEmailExist = await this.userRepository.findByEmail(email);
 
-        if (checkUserExists.length === 1 && checkUserExists[0].id !== user_id) {
-          throw new AppError('Email já cadastrado')
+        if (userWithEmailExist && userWithEmailExist.id !== user_id) { 
+          throw new AppError("Este email já  está em uso!")
         }
+      }
 
-        if (password && new_password) {
-          const checkOldPassword = await compare(password,checkUserExists[0].password)
+      user.name = name ?? user.name ;
+      user.email = email ?? user.email;
+      
+      if (!new_password || !password){
+        throw new AppError("Você precisa informar as senhas")
+      }
 
-            if (!checkOldPassword){
-              throw new AppError("A senha antiga não confere")
-            }
+      if (new_password && password){
+        const checkOldPassword = await compare(password, user[0].password);
 
-            const att_password = await hash(new_password, 8)
-           
-            await this.userRepository.update({password:att_password })
+          if (!checkOldPassword){
+            throw new AppError("A senha antiga não confere");
           }
 
-        await this.userRepository.update({
-            name,
-            email,
-          })
+          user.password = await hash(new_password, 8);
+      }
+      return await this.userRepository.update({user_id, name: user.name, email: user.email, password: user.password});
     }
 
     async deleteUser({user_id}){
