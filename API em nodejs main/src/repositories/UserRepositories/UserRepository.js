@@ -17,9 +17,13 @@ class UserRepository {
         return {id: userId}
     }
 
-    async update({ user_id, name, email, password}){
-        
-        await knex('users').where('id', user_id).update({ name, email, password});
+    async update({ user_id, name, email, password, avatar}){
+        if (user_id && avatar) {
+            return await knex('users').where('id', user_id).update({avatar});
+            
+        } else {
+           return await knex('users').where('id', user_id).update({ name, email, password});
+        }
     }
     
     async deleteUser(user_id){
