@@ -14,7 +14,6 @@ class UserCreateService {
         if (checkUserExists) { 
             throw new AppError("Este email já  está em uso!")
         }
-
         const hashedPassword = await hash(password, 8);
 
         const userCreated = await this.userRepository.create({name, email, password: hashedPassword});

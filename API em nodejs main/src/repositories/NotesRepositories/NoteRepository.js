@@ -15,7 +15,6 @@ class NoteRepository {
                 note_id,
                 name,
                 user_id
-                
             }
         });
         
